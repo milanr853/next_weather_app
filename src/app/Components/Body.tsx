@@ -43,6 +43,7 @@ export default function Body() {
         <div className='px-36 900px:px-12'>
             {
                 weatherData === null ?
+                    // no data placeholder
                     <div className='flex flex-col items-center'>
                         <div className='mb-6'>
                             <Image
