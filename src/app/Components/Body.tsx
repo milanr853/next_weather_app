@@ -62,14 +62,13 @@ export default function Body() {
                     <>
                         <div className='flex flex-col gap-4'>
                             {/* header */}
-                            <div className=' flex justify-between items-center'>
+                            <div className=' flex flex-row 600px:flex-col justify-between items-center'>
                                 <div className='flex items-center gap-1'>
                                     <p className=' text-2xl'>{format(parseISO(firstData?.dt_txt ?? ""), "EEEE")}</p>
                                     <p className=' text-xl'>({format(parseISO(firstData?.dt_txt ?? ""), "dd.MM.yyyy")})</p>
                                 </div>
                                 <p className='text-2xl'>{`${weatherData?.city?.name}, ${weatherData?.city?.country}`}</p>
                             </div>
-
                             {/* weather data section */}
                             <Wrapper bgColor="bg-blue-300" gap='12'>
                                 {/* temperature */}
@@ -96,18 +95,18 @@ export default function Body() {
                                 </div>
                             </Wrapper>
 
+
                             {/* extra details section */}
                             <div className='flex gap-4'>
-                                {/* left */}
-                                <Wrapper width="w-[180px]">
-                                    <div className="flex flex-col items-center justify-center w-full">
-                                        <p className='capitalize text-center '>{firstData?.weather[0].description}</p>
-                                        <WeatherImage weatherIcon={firstData?.weather[0].icon ?? ""} time={firstData?.dt_txt ?? ""} />
-                                    </div>
-                                </Wrapper>
-
-                                {/* right */}
-                                <Wrapper bgColor="bg-yellow-300">
+                                <Wrapper bgColor="bg-yellow-300" className='gap-4'>
+                                    {/* left */}
+                                    <section className='flex items-end w-[260px]'>
+                                        <div className="flex flex-col items-center justify-center w-full">
+                                            <p className='capitalize text-center '>{firstData?.weather[0].description}</p>
+                                            <WeatherImage weatherIcon={firstData?.weather[0].icon ?? ""} time={firstData?.dt_txt ?? ""} />
+                                        </div>
+                                    </section>
+                                    {/* right */}
                                     <WeatherDetails
                                         visibility={metersToKilometers(firstData?.visibility ?? 10000)}
                                         humidity={`${firstData?.main?.humidity ?? 30}%`}
@@ -120,6 +119,7 @@ export default function Body() {
                             </div>
                         </div>
 
+
                         {/* 5 days forecast section */}
                         <div className='mt-4 flex flex-col gap-4 mb-4'>
                             <p className='text-2xl'>Forecast</p>
@@ -127,13 +127,13 @@ export default function Body() {
                                 firstDataForEachDate.map((d, ind) => (
                                     <Wrapper key={ind} className='gap-4'>
                                         {/* left */}
-                                        <section className='flex gap-4 items-end'>
+                                        <section className='flex gap-4 items-end w-[260px]'>
                                             <div className='flex flex-col gap-2 items-center'>
                                                 <WeatherImage weatherIcon={d?.weather[0]?.icon ?? "01d"} />
                                                 <p>{format(parseISO(d?.dt_txt ?? ""), "dd/MM")}</p>
                                                 <p className='text-sm'>{format(parseISO(d?.dt_txt ?? ""), "EEEE")}</p>
                                             </div>
-                                            <div className='flex flex-col gap-2 items-center'>
+                                            <div className='flex flex-col gap-2 items-start'>
                                                 <span className='text-5xl'>{convertKelvinToCelcius(d?.main?.temp ?? 0)}°</span>
                                                 <p className='text-xs space-x-1 whitespace-nowrap'>
                                                     <span>Feels like:</span>
@@ -144,16 +144,14 @@ export default function Body() {
                                         </section>
 
                                         {/* right */}
-                                        <section className='overflow-x-auto flex justify-between w-full'>
-                                            <WeatherDetails
-                                                visibility={metersToKilometers(d?.visibility ?? 10000)}
-                                                humidity={`${d?.main?.humidity ?? 30}%`}
-                                                windspeed={convertWindSpeed(d?.wind?.speed ?? 1.64)}
-                                                airpressure={`${d?.main?.pressure ?? 1012} hPa`}
-                                                sunrise={format(fromUnixTime(weatherData?.city.sunrise ?? 1702949452), "H:mm")}
-                                                sunset={format(fromUnixTime(weatherData?.city.sunset ?? 1702992652), "H:mm")}
-                                            />
-                                        </section>
+                                        <WeatherDetails
+                                            visibility={metersToKilometers(d?.visibility ?? 10000)}
+                                            humidity={`${d?.main?.humidity ?? 30}%`}
+                                            windspeed={convertWindSpeed(d?.wind?.speed ?? 1.64)}
+                                            airpressure={`${d?.main?.pressure ?? 1012} hPa`}
+                                            sunrise={format(fromUnixTime(weatherData?.city.sunrise ?? 1702949452), "H:mm")}
+                                            sunset={format(fromUnixTime(weatherData?.city.sunset ?? 1702992652), "H:mm")}
+                                        />
                                     </Wrapper>
                                 ))
                             }
