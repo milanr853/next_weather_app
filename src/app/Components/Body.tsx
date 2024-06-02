@@ -20,6 +20,25 @@ export default function Body() {
     const firstData = weatherData === null ? null : weatherData?.list[0]
 
 
+    const uniqueDates = [
+        ...new Set(
+            weatherData?.list.map(
+                (entry: any) => new Date(entry.dt * 1000).toISOString().split("T")[0]
+            )
+        )
+    ];
+
+    const firstDataForEachDate = uniqueDates.map((date) => {
+        return weatherData?.list.find((entry: any) => {
+            const entryDate = new Date(entry.dt * 1000).toISOString().split("T")[0];
+            const entryTime = new Date(entry.dt * 1000).getHours();
+            return entryDate === date && entryTime >= 6;
+        });
+    });
+
+
+
+
     return (
         <div className='px-36 900px:px-12'>
             {
@@ -101,11 +120,40 @@ export default function Body() {
                         </div>
 
                         {/* 5 days forecast section */}
-                        <div className='mt-4 flex flex-col gap-4'>
+                        <div className='mt-4 flex flex-col gap-4 mb-4'>
                             <p className='text-2xl'>Forecast</p>
                             {
-                                [1, 2, 3, 4, 5].map(elem => (
-                                    <Wrapper key={elem}></Wrapper>
+                                firstDataForEachDate.map((d, ind) => (
+                                    <Wrapper key={ind} className='gap-4'>
+                                        {/* left */}
+                                        <section className='flex gap-4 items-end'>
+                                            <div className='flex flex-col gap-2 items-center'>
+                                                <WeatherImage weatherIcon={d?.weather[0]?.icon ?? "01d"} />
+                                                <p>{format(parseISO(d?.dt_txt ?? ""), "dd/MM")}</p>
+                                                <p className='text-sm'>{format(parseISO(d?.dt_txt ?? ""), "EEEE")}</p>
+                                            </div>
+                                            <div className='flex flex-col gap-2 items-center'>
+                                                <span className='text-5xl'>{convertKelvinToCelcius(d?.main?.temp ?? 0)}°</span>
+                                                <p className='text-xs space-x-1 whitespace-nowrap'>
+                                                    <span>Feels like:</span>
+                                                    <span>{convertKelvinToCelcius(d?.main?.feels_like ?? 0)}°</span>
+                                                </p>
+                                                <p className='capitalize'>{d?.weather[0]?.description ?? ""}</p>
+                                            </div>
+                                        </section>
+
+                                        {/* right */}
+                                        <section className='overflow-x-auto flex justify-between w-full'>
+                                            <WeatherDetails
+                                                visibility={metersToKilometers(d?.visibility ?? 10000)}
+                                                humidity={`${d?.main?.humidity ?? 30}%`}
+                                                windspeed={convertWindSpeed(d?.wind?.speed ?? 1.64)}
+                                                airpressure={`${d?.main?.pressure ?? 1012} hPa`}
+                                                sunrise={format(fromUnixTime(weatherData?.city.sunrise ?? 1702949452), "H:mm")}
+                                                sunset={format(fromUnixTime(weatherData?.city.sunset ?? 1702992652), "H:mm")}
+                                            />
+                                        </section>
+                                    </Wrapper>
                                 ))
                             }
                         </div>
