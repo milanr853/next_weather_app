@@ -13,11 +13,11 @@ const SearchBar: React.FC = () => {
 
     const dispatch = useDispatch()
 
-
+    console.log(window.location.href)
     //api calls
     async function getWeather(cityName: string) {
         try {
-            const { data } = await axios.get("http://localhost:3000/api/weather?address=" + cityName)
+            const { data } = await axios.get(`${window.location.href}api/weather?address=` + cityName)
             dispatch(getData(data))
             alert(`Data received`)
         }
