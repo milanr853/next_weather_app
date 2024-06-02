@@ -1,11 +1,10 @@
 "use client"
 
 import axios from 'axios'
-import React, { ChangeEvent, FormEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { GoSearch } from 'react-icons/go'
 import { getData } from "@/redux/features/weatherDataSlice"
 import { useDispatch } from 'react-redux'
-
 
 
 const SearchBar: React.FC = () => {
@@ -13,11 +12,13 @@ const SearchBar: React.FC = () => {
 
     const dispatch = useDispatch()
 
-    console.log(window.location.href)
+    const currentPath = typeof window !== 'undefined' ? window.location.href : '';
+
+
     //api calls
     async function getWeather(cityName: string) {
         try {
-            const { data } = await axios.get(`${window.location.href}api/weather?address=` + cityName)
+            const { data } = await axios.get(`${currentPath}api/weather?address=` + cityName)
             dispatch(getData(data))
             alert(`Data received`)
         }
